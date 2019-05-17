@@ -1,8 +1,15 @@
 require 'bike'
+require 'pry-byebug'
 
-describe Bike do
-    it 'check if bike is working?' do
-        bike = Bike.new
-        expect(bike).to respond_to(:working?)
-    end
+describe 'Bike' do
+  let(:bike) { Bike.new }
+
+  it 'shows class Bike exists' do
+    expect(bike).to be_a_kind_of(Bike)
+  end
+
+  it 'can be reported broken' do
+    bike.report_broken
+    expect(bike).to be_broken
+  end
 end

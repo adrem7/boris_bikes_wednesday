@@ -1,29 +1,54 @@
-require './lib/dockingstation'
-require './lib/bike'
+require 'dockingstation'
+require 'bike'
+require 'pry-byebug'
 
 
-describe DockingStation do
-  # it 'can release bike from docking station' do
-  #   docking_station = DockingStation.new
-  #   expect(docking_station.release_bike).to not_include(bike)
-  # end
-  #
-  # it 'expects the bike to be working' do
-  #   docking_station = DockingStation.new
-  #   released_bike = docking_station.release_bike
-  #   expect(released_bike.working?).to eq(true)
-  # end
+describe 'DockingStation' do
+  let(:docking_station) { DockingStation.new }
+  let(:bike) { Bike.new }
 
-  it 'expects to return the bike to docking station' do
-    docking_station = DockingStation.new
-    bike = Bike.new
-    docking_station.add_bike(bike)
-    expect(docking_station.dock).to include(bike)
+  it 'shows class DockingStation exists' do
+    expect(docking_station).to be_a_kind_of(DockingStation)
   end
 
-  # it 'expects to see a bike in docking station' do
-  #   docking_station = DockingStation.new
-  #   docking_station.add_bike
-  #   expect(docking_station.view_dock).to include(bike)
-  # end
+  it 'responds to release_bike method' do
+    expect(docking_station).to respond_to(:release_bike)
+  end
+
+  it 'can release bike from docking station' do
+    docking_station.dock(bike)
+    expect(docking_station.release_bike).to be_a_kind_of(Bike)
+  end
+
+  it 'responds to dock_bike method' do
+    expect(docking_station).to respond_to(:dock)
+  end
+
+  describe '#release' do
+    it 'raises error if release bike on empty dock' do
+      expect { docking_station.release_bike }.to raise_error 'No bikes available'
+    end
+
+    it 'raises error if bike is broken' do
+      bike.report_broken
+      docking_station.dock(bike)
+      expect { docking_station.release_bike }.to raise_error 'This bike is broken'
+    end
+  end
+
+  describe '#dock' do
+    it 'raises error if dock is full' do
+      docking_station.capacity.times { docking_station.dock(bike) }
+      expect { docking_station.dock(bike) }.to raise_error 'Docking station full'
+    end
+  end
+
+  describe '#initialization' do
+    it 'has a variable capacity' do
+      docking_station = DockingStation.new(50)
+      50.times { docking_station.dock(bike) }
+      expect{ docking_station.dock(bike) }.to raise_error 'Docking station full'
+    end
+  end
+
 end
